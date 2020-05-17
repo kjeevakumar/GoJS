@@ -1,9 +1,17 @@
 "use strict";
 /*
-*  Copyright (C) 1998-2018 by Northwoods Software Corporation. All Rights Reserved.
+*  Copyright (C) 1998-2020 by Northwoods Software Corporation. All Rights Reserved.
 */
 
 // A custom Link that draws a "balloon" shape around the Link.fromNode
+
+/*
+* This is an extension and not part of the main GoJS library.
+* Note that the API for this class may change with any version, even point releases.
+* If you intend to use an extension in production, you should copy the code to your own source directory.
+* Extensions can be found in the GoJS kit under the extensions or extensionsTS folders.
+* See the Extensions intro page (https://gojs.net/latest/intro/extensions.html) for more information.
+*/
 
 /**
 * @constructor
@@ -16,9 +24,21 @@
 function BalloonLink() {
   go.Link.call(this);
   this.layerName = "Background";
-  this.base = 10;
+  this._base = 10;
 }
 go.Diagram.inherit(BalloonLink, go.Link);
+
+/**
+* @ignore
+* Copies properties to a cloned BalloonLink.
+* @this {BalloonLink}
+* @param {BalloonLink} copy
+* @override
+*/
+BalloonLink.prototype.cloneProtected = function(copy) {
+  go.Link.prototype.cloneProtected.call(this, copy);
+  copy._base = this._base;
+}
 
 /*
 * The width of the base of the triangle at the center point of the Link.fromNode.
@@ -35,7 +55,6 @@ Object.defineProperty(BalloonLink.prototype, "base", {
 /**
 * Produce a Geometry from the Link's route that draws a "balloon" shape around the Link.fromNode
 * and has a triangular shape with the base at the fromNode and the top at the toNode.
-* @override
 * @this {BalloonLink}
 */
 BalloonLink.prototype.makeGeometry = function() {

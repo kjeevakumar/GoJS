@@ -1,9 +1,17 @@
 "use strict";
 /*
-*  Copyright (C) 1998-2018 by Northwoods Software Corporation. All Rights Reserved.
+*  Copyright (C) 1998-2020 by Northwoods Software Corporation. All Rights Reserved.
 */
 
 // This layout is patterned after the "Table" Panel layout.
+
+/*
+* This is an extension and not part of the main GoJS library.
+* Note that the API for this class may change with any version, even point releases.
+* If you intend to use an extension in production, you should copy the code to your own source directory.
+* Extensions can be found in the GoJS kit under the extensions or extensionsTS folders.
+* See the Extensions intro page (https://gojs.net/latest/intro/extensions.html) for more information.
+*/
 
 /**
 * @constructor
@@ -258,13 +266,12 @@ TableLayout.prototype.getEffectiveTableStretch = function(child, row, col) {
 
 /**
 * @ignore
-* @override
 * @this {TableLayout}
 */
 TableLayout.prototype.doLayout = function(coll) {
   this.arrangementOrigin = this.initialOrigin(this.arrangementOrigin);
   // put all eligible Parts that are not Links into an Array
-  var parts = new go.List(go.Part);
+  var parts = new go.List(/*go.Part*/);
   this.collectParts(coll).each(function(p) {
     if (!(p instanceof go.Link)) {
       parts.add(p);
@@ -282,7 +289,6 @@ TableLayout.prototype.doLayout = function(coll) {
 
 /**
 * @ignore
-* @override
 * @this {TableLayout}
 * @param {List} parts
 * @param {Array.<Array.<Array>>} rowcol  [row][col][cell]
@@ -291,7 +297,6 @@ TableLayout.prototype.beforeMeasure = function(parts, rowcol) { };
 
 /**
 * @ignore
-* @override
 * @this {TableLayout}
 * @param {List} parts
 * @param {Array.<Array.<Array>>} rowcol  [row][col][cell]
@@ -300,7 +305,6 @@ TableLayout.prototype.afterArrange = function(parts, rowcol) { };
 
 /**
 * @ignore
-* @override
 * @this {TableLayout}
 */
 TableLayout.prototype.measureTable = function(width, height, children, union, minw, minh) {
@@ -416,7 +420,7 @@ TableLayout.prototype.measureTable = function(width, height, children, union, mi
           child.ensureBounds();
         }
 
-        var m = child.actualBounds;
+        var m = this.getLayoutBounds(child);
         var mwidth = Math.max(m.width + margw, 0);
         var mheight = Math.max(m.height + margh, 0);
 
@@ -469,7 +473,7 @@ TableLayout.prototype.measureTable = function(width, height, children, union, mi
     var rowHerald = this.getRowDefinition(child.row);
     var colHerald = this.getColumnDefinition(child.column);
     // We want to gather the largest difference between desired and expected col/row sizes
-    var mb = child.actualBounds;
+    var mb = this.getLayoutBounds(child);
     var marg = child.margin;
     var margw = marg.right + marg.left;
     var margh = marg.top + marg.bottom;
@@ -552,7 +556,7 @@ TableLayout.prototype.measureTable = function(width, height, children, union, mi
     var margw = marg.right + marg.left;
     var margh = marg.top + marg.bottom;
 
-    var m = child.actualBounds;
+    var m = this.getLayoutBounds(child);
     var mwidth = Math.max(m.width + margw, 0);
     var mheight = Math.max(m.height + margh, 0);
     if (isFinite(colleft)) mwidth = Math.min(mwidth, allowedSize.width);
@@ -623,7 +627,7 @@ TableLayout.prototype.measureTable = function(width, height, children, union, mi
     var marg = child.margin;
     var margw = marg.right + marg.left;
     var margh = marg.top + marg.bottom;
-    var m = child.actualBounds;
+    var m = this.getLayoutBounds(child);
     var mwidth = Math.max(m.width + margw, 0);
     var mheight = Math.max(m.height + margh, 0);
 
@@ -697,7 +701,6 @@ TableLayout.prototype.measureTable = function(width, height, children, union, mi
 
 /**
 * @ignore
-* @override
 * @this {TableLayout}
 */
 TableLayout.prototype.arrangeTable = function(children, union, rowcol) {
@@ -822,11 +825,11 @@ TableLayout.prototype.arrangeTable = function(children, union, rowcol) {
         if (/* isNaN(child.resizeObject.desiredSize.width) && */ (stretch === go.GraphObject.Fill || stretch === go.GraphObject.Horizontal))
           width = Math.max(colwidth - margw, 0);
         else
-          width = child.actualBounds.width;
+          width = this.getLayoutBounds(child).width;
         if (/* isNaN(child.resizeObject.desiredSize.height) && */ (stretch === go.GraphObject.Fill || stretch === go.GraphObject.Vertical))
           height = Math.max(rowheight - margh, 0);
         else
-          height = child.actualBounds.height;
+          height = this.getLayoutBounds(child).height;
 
         // min and max override any stretch values
         var max = child.maxSize;

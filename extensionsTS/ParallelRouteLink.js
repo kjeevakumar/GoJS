@@ -1,7 +1,13 @@
+/*
+*  Copyright (C) 1998-2020 by Northwoods Software Corporation. All Rights Reserved.
+*/
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -14,32 +20,35 @@ var __extends = (this && this.__extends) || (function () {
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "../release/go"], factory);
+        define(["require", "exports", "../release/go.js"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /*
-    *  Copyright (C) 1998-2018 by Northwoods Software Corporation. All Rights Reserved.
+    * This is an extension and not part of the main GoJS library.
+    * Note that the API for this class may change with any version, even point releases.
+    * If you intend to use an extension in production, you should copy the code to your own source directory.
+    * Extensions can be found in the GoJS kit under the extensions or extensionsTS folders.
+    * See the Extensions intro page (https://gojs.net/latest/intro/extensions.html) for more information.
     */
-    var go = require("../release/go");
-    // A custom Link whose routing is parallel to other links connecting the same pair of ports
+    var go = require("../release/go.js");
     /**
-    * @constructor
-    * @extends Link
-    * @class
-    * This custom Link class customizes its route to go parallel to other links connecting the same ports,
-    * if the link is not orthogonal and is not Bezier curved.
-    */
+     * This custom {@link Link} class customizes its route to go parallel to other links connecting the same ports,
+     * if the link is not orthogonal and is not Bezier curved.
+     *
+     * If you want to experiment with this extension, try the <a href="../../extensionsTS/ParallelRoute.html">Parallel Route Links</a> sample.
+     * @category Part Extension
+     */
     var ParallelRouteLink = /** @class */ (function (_super) {
         __extends(ParallelRouteLink, _super);
         function ParallelRouteLink() {
             return _super !== null && _super.apply(this, arguments) || this;
         }
         /**
-        * @this {ParallelRouteLink}
-        * @return {boolean}
-        */
+         * Constructs the link's route by modifying {@link #points}.
+         * @return {boolean} true if it computed a route of points
+         */
         ParallelRouteLink.prototype.computePoints = function () {
             var result = _super.prototype.computePoints.call(this);
             if (!this.isOrthogonal && this.curve !== go.Link.Bezier && this.hasCurviness()) {
@@ -98,7 +107,6 @@ var __extends = (this && this.__extends) || (function () {
             }
             return result;
         };
-        ;
         return ParallelRouteLink;
     }(go.Link));
     exports.ParallelRouteLink = ParallelRouteLink;

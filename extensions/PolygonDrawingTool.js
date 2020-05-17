@@ -1,9 +1,17 @@
 "use strict";
 /*
-*  Copyright (C) 1998-2018 by Northwoods Software Corporation. All Rights Reserved.
+*  Copyright (C) 1998-2020 by Northwoods Software Corporation. All Rights Reserved.
 */
 
 // A custom Tool for drawing polygons or polylines
+
+/*
+* This is an extension and not part of the main GoJS library.
+* Note that the API for this class may change with any version, even point releases.
+* If you intend to use an extension in production, you should copy the code to your own source directory.
+* Extensions can be found in the GoJS kit under the extensions or extensionsTS folders.
+* See the Extensions intro page (https://gojs.net/latest/intro/extensions.html) for more information.
+*/
 
 /**
 * @constructor
@@ -24,6 +32,8 @@ function PolygonDrawingTool() {
   this.name = "PolygonDrawing";
   this._isPolygon = true;
   this._hasArcs = false;
+  this._isOrthoOnly = false;
+  this._isGridSnapEnabled = false;
   this._archetypePartData = {}; // the data to copy for a new polygon Part
 
   // this is the Shape that is shown during a drawing operation
@@ -83,6 +93,40 @@ PolygonDrawingTool.prototype.doDeactivate = function() {
 };
 
 /**
+* Given a potential Point for the next segment, return a Point it to snap to the grid, and remain orthogonal, if either is applicable.
+* @this {PolygonDrawingTool}
+*/
+PolygonDrawingTool.prototype.modifyPointForGrid = function(p) {
+  var pregrid = p.copy();
+  var grid = this.diagram.grid;
+  if (grid !== null && grid.visible && this.isGridSnapEnabled) {
+    var cell = grid.gridCellSize;
+    var orig = grid.gridOrigin;
+    p = p.copy();
+    p.snapToGrid(orig.x, orig.y, cell.width, cell.height); // compute the closest grid point (modifies p)
+  }
+  if (this.temporaryShape.geometry === null) return p;
+  var fig = this.temporaryShape.geometry.figures.first();
+  var segments = fig.segments;
+  if (this.isOrthoOnly && segments.count > 0) {
+    var lastPt = null;
+    if (segments.count === 1) {
+      lastPt = new go.Point(fig.startX, fig.startY);
+    } else if (segments.count > 1) {
+      // the last segment is the current temporary segment, which we might be altering. We want the segment before
+      var secondLastSegment = (segments.elt(segments.count - 2));
+      lastPt = new go.Point(secondLastSegment.endX, secondLastSegment.endY);
+    }
+    if (pregrid.distanceSquared(lastPt.x, pregrid.y) < pregrid.distanceSquared(pregrid.x, lastPt.y)) { // closer to X coord
+      return new go.Point(lastPt.x, p.y);
+    } else { // closer to Y coord
+      return new go.Point(p.x, lastPt.y);
+    }
+  }
+  return p;
+}
+
+/**
 * This internal method adds a segment to the geometry of the {@link #temporaryShape}.
 * @this {PolygonDrawingTool}
 */
@@ -92,7 +136,7 @@ PolygonDrawingTool.prototype.addPoint = function(p) {
 
   // for the temporary Shape, normalize the geometry to be in the viewport
   var viewpt = this.diagram.viewportBounds.position;
-  var q = new go.Point(p.x-viewpt.x, p.y-viewpt.y);
+  var q = this.modifyPointForGrid(new go.Point(p.x - viewpt.x, p.y - viewpt.y));
 
   var part = shape.part;
   // if it's not in the Diagram, re-initialize the Shape's geometry and add the Part to the Diagram
@@ -126,6 +170,8 @@ PolygonDrawingTool.prototype.addPoint = function(p) {
 * @this {PolygonDrawingTool}
 */
 PolygonDrawingTool.prototype.moveLastPoint = function(p) {
+  p = this.modifyPointForGrid(p);
+
   // must copy whole Geometry in order to change a PathSegment
   var shape = this.temporaryShape;
   var geo = shape.geometry.copy();
@@ -297,7 +343,7 @@ Object.defineProperty(PolygonDrawingTool.prototype, "isPolygon", {
 });
 
 /**
-* Gets or sets whether this tools draws shapes with quadratic bezier curves for each segment, or just straight lines.
+* Gets or sets whether this tool draws shapes with quadratic bezier curves for each segment, or just straight lines.
 * The default value is false -- only use straight lines.
 * @name PolygonDrawingTool#hasArcs
 * @function.
@@ -307,6 +353,31 @@ Object.defineProperty(PolygonDrawingTool.prototype, "hasArcs", {
   get: function() { return this._hasArcs; },
   set: function(val) { this._hasArcs = val; }
 });
+
+/**
+* Gets or sets whether this tool draws shapes with only orthogonal segments, or segments in any direction.
+* The default value is false -- draw segments in any direction. This does not restrict the closing segment, which may not be orthogonal.
+* @name PolygonDrawingTool#isOrthoOnly
+* @function.
+* @return {boolean}
+*/
+Object.defineProperty(PolygonDrawingTool.prototype, "isOrthoOnly", {
+  get: function() { return this._isOrthoOnly; },
+  set: function(val) { this._isOrthoOnly = val; }
+});
+
+/**
+* Gets or sets whether this tool only places the shape's corners on the Diagram's visible grid.
+* The default value is false.
+* @name PolygonDrawingTool#isGridSnapEnabled
+* @function.
+* @return {boolean}
+*/
+Object.defineProperty(PolygonDrawingTool.prototype, "isGridSnapEnabled", {
+  get: function() { return this._isGridSnapEnabled; },
+  set: function(val) { this._isGridSnapEnabled = val; }
+});
+
 
 /**
 * Gets or sets the Shape that is used to hold the line as it is being drawn.

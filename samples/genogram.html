@@ -1,13 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Genogram</title>
-<meta name="description" content="A genogram is a family tree diagram for visualizing hereditary patterns." />
-  <!-- Copyright 1998-2018 by Northwoods Software Corporation. -->
   <meta charset="UTF-8">
+  <title>Genogram</title>
+  <meta name="description" content="A genogram is a family tree diagram for visualizing hereditary patterns." />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Copyright 1998-2020 by Northwoods Software Corporation. -->
+
   <script src="../release/go.js"></script>
-    <script src="../assets/js/goSamples.js"></script>  <!-- this is only for the GoJS Samples framework -->
+  <script src="../assets/js/goSamples.js"></script>  <!-- this is only for the GoJS Samples framework -->
   <script id="code">
     function init() {
       if (window.goSamples) goSamples();  // init for these samples -- you don't need to call this
@@ -16,14 +17,13 @@
         $(go.Diagram, "myDiagramDiv",
           {
             initialAutoScale: go.Diagram.Uniform,
-            initialContentAlignment: go.Spot.Center,
             "undoManager.isEnabled": true,
             // when a node is selected, draw a big yellow circle behind it
             nodeSelectionAdornmentTemplate:
               $(go.Adornment, "Auto",
                 { layerName: "Grid" },  // the predefined layer that is behind everything else
-                $(go.Shape, "Circle", { fill: "yellow", stroke: null }),
-                $(go.Placeholder)
+                $(go.Shape, "Circle", { fill: "#c1cee3", stroke: null }),
+                $(go.Placeholder, { margin: 2 })
               ),
             layout:  // use a custom layout, defined below
               $(GenogramLayout, { direction: 90, layerSpacing: 30, columnSpacing: 10 })
@@ -32,19 +32,19 @@
       // determine the color for each attribute shape
       function attrFill(a) {
         switch (a) {
-          case "A": return "green";
-          case "B": return "orange";
-          case "C": return "red";
-          case "D": return "cyan";
-          case "E": return "gold";
-          case "F": return "pink";
-          case "G": return "blue";
-          case "H": return "brown";
-          case "I": return "purple";
-          case "J": return "chartreuse";
-          case "K": return "lightgray";
-          case "L": return "magenta";
-          case "S": return "red";
+          case "A": return "#00af54"; // green
+          case "B": return "#f27935"; // orange
+          case "C": return "#d4071c"; // red
+          case "D": return "#70bdc2"; // cyan
+          case "E": return "#fcf384"; // gold
+          case "F": return "#e69aaf"; // pink
+          case "G": return "#08488f"; // blue
+          case "H": return "#866310"; // brown
+          case "I": return "#9270c2"; // purple
+          case "J": return "#a3cf62"; // chartreuse
+          case "K": return "#91a4c2"; // lightgray bluish
+          case "L": return "#af70c2"; // magenta
+          case "S": return "#d4071c"; // red
           default: return "transparent";
         }
       }
@@ -105,11 +105,11 @@
       // named by the category value in the node data object
       myDiagram.nodeTemplateMap.add("M",  // male
         $(go.Node, "Vertical",
-          { locationSpot: go.Spot.Center, locationObjectName: "ICON" },
+          { locationSpot: go.Spot.Center, locationObjectName: "ICON", selectionObjectName: "ICON" },
           $(go.Panel,
             { name: "ICON" },
             $(go.Shape, "Square",
-              { width: 40, height: 40, strokeWidth: 2, fill: "white", portId: "" }),
+              { width: 40, height: 40, strokeWidth: 2, fill: "white", stroke: "#919191", portId: "" }),
             $(go.Panel,
               { // for each attribute show a Shape at a particular place in the overall square
                 itemTemplate:
@@ -131,11 +131,11 @@
 
       myDiagram.nodeTemplateMap.add("F",  // female
         $(go.Node, "Vertical",
-          { locationSpot: go.Spot.Center, locationObjectName: "ICON" },
+          { locationSpot: go.Spot.Center, locationObjectName: "ICON", selectionObjectName: "ICON" },
           $(go.Panel,
             { name: "ICON" },
             $(go.Shape, "Circle",
-              { width: 40, height: 40, strokeWidth: 2, fill: "white", portId: "" }),
+              { width: 40, height: 40, strokeWidth: 2, fill: "white", stroke: "#a1a1a1", portId: "" }),
             $(go.Panel,
               { // for each attribute show a Shape at a particular place in the overall circle
                 itemTemplate:
@@ -163,68 +163,68 @@
       myDiagram.linkTemplate =  // for parent-child relationships
         $(go.Link,
           {
-            routing: go.Link.Orthogonal, curviness: 15,
+            routing: go.Link.Orthogonal, corner: 5,
             layerName: "Background", selectable: false,
             fromSpot: go.Spot.Bottom, toSpot: go.Spot.Top
           },
-          $(go.Shape, { strokeWidth: 2 })
+          $(go.Shape, { stroke: "#424242", strokeWidth: 2 })
         );
 
       myDiagram.linkTemplateMap.add("Marriage",  // for marriage relationships
         $(go.Link,
           { selectable: false },
-          $(go.Shape, { strokeWidth: 2, stroke: "blue" })
-      ));
+          $(go.Shape, { strokeWidth: 2.5, stroke: "#5d8cc1" /* blue */ })
+        ));
 
 
       // n: name, s: sex, m: mother, f: father, ux: wife, vir: husband, a: attributes/markers
       setupDiagram(myDiagram, [
-          { key: 0, n: "Aaron", s: "M", m:-10, f:-11, ux: 1, a: ["C", "F", "K"] },
-          { key: 1, n: "Alice", s: "F", m:-12, f:-13, a: ["B", "H", "K"] },
-          { key: 2, n: "Bob", s: "M", m: 1, f: 0, ux: 3, a: ["C", "H", "L"] },
-          { key: 3, n: "Barbara", s: "F", a: ["C"] },
-          { key: 4, n: "Bill", s: "M", m: 1, f: 0, ux: 5, a: ["E", "H"] },
-          { key: 5, n: "Brooke", s: "F", a: ["B", "H", "L"] },
-          { key: 6, n: "Claire", s: "F", m: 1, f: 0, a: ["C"] },
-          { key: 7, n: "Carol", s: "F", m: 1, f: 0, a: ["C", "I"] },
-          { key: 8, n: "Chloe", s: "F", m: 1, f: 0, vir: 9, a: ["E"] },
-          { key: 9, n: "Chris", s: "M", a: ["B", "H"] },
-          { key: 10, n: "Ellie", s: "F", m: 3, f: 2, a: ["E", "G"] },
-          { key: 11, n: "Dan", s: "M", m: 3, f: 2, a: ["B", "J"] },
-          { key: 12, n: "Elizabeth", s: "F", vir: 13, a: ["J"] },
-          { key: 13, n: "David", s: "M", m: 5, f: 4, a: ["B", "H"] },
-          { key: 14, n: "Emma", s: "F", m: 5, f: 4, a: ["E", "G"] },
-          { key: 15, n: "Evan", s: "M", m: 8, f: 9, a: ["F", "H"] },
-          { key: 16, n: "Ethan", s: "M", m: 8, f: 9, a: ["D", "K"] },
-          { key: 17, n: "Eve", s: "F", vir: 16, a: ["B", "F", "L"] },
-          { key: 18, n: "Emily", s: "F", m: 8, f: 9 },
-          { key: 19, n: "Fred", s: "M", m: 17, f: 16, a: ["B"] },
-          { key: 20, n: "Faith", s: "F", m: 17, f: 16, a: ["L"] },
-          { key: 21, n: "Felicia", s: "F", m: 12, f: 13, a: ["H"] },
-          { key: 22, n: "Frank", s: "M", m: 12, f: 13, a: ["B", "H"] },
+        { key: 0, n: "Aaron", s: "M", m: -10, f: -11, ux: 1, a: ["C", "F", "K"] },
+        { key: 1, n: "Alice", s: "F", m: -12, f: -13, a: ["B", "H", "K"] },
+        { key: 2, n: "Bob", s: "M", m: 1, f: 0, ux: 3, a: ["C", "H", "L"] },
+        { key: 3, n: "Barbara", s: "F", a: ["C"] },
+        { key: 4, n: "Bill", s: "M", m: 1, f: 0, ux: 5, a: ["E", "H"] },
+        { key: 5, n: "Brooke", s: "F", a: ["B", "H", "L"] },
+        { key: 6, n: "Claire", s: "F", m: 1, f: 0, a: ["C"] },
+        { key: 7, n: "Carol", s: "F", m: 1, f: 0, a: ["C", "I"] },
+        { key: 8, n: "Chloe", s: "F", m: 1, f: 0, vir: 9, a: ["E"] },
+        { key: 9, n: "Chris", s: "M", a: ["B", "H"] },
+        { key: 10, n: "Ellie", s: "F", m: 3, f: 2, a: ["E", "G"] },
+        { key: 11, n: "Dan", s: "M", m: 3, f: 2, a: ["B", "J"] },
+        { key: 12, n: "Elizabeth", s: "F", vir: 13, a: ["J"] },
+        { key: 13, n: "David", s: "M", m: 5, f: 4, a: ["B", "H"] },
+        { key: 14, n: "Emma", s: "F", m: 5, f: 4, a: ["E", "G"] },
+        { key: 15, n: "Evan", s: "M", m: 8, f: 9, a: ["F", "H"] },
+        { key: 16, n: "Ethan", s: "M", m: 8, f: 9, a: ["D", "K"] },
+        { key: 17, n: "Eve", s: "F", vir: 16, a: ["B", "F", "L"] },
+        { key: 18, n: "Emily", s: "F", m: 8, f: 9 },
+        { key: 19, n: "Fred", s: "M", m: 17, f: 16, a: ["B"] },
+        { key: 20, n: "Faith", s: "F", m: 17, f: 16, a: ["L"] },
+        { key: 21, n: "Felicia", s: "F", m: 12, f: 13, a: ["H"] },
+        { key: 22, n: "Frank", s: "M", m: 12, f: 13, a: ["B", "H"] },
 
-          // "Aaron"'s ancestors
-          { key: -10, n: "Paternal Grandfather", s: "M", m: -33, f: -32, ux: -11, a: ["A", "S"] },
-          { key: -11, n: "Paternal Grandmother", s: "F", a: ["E", "S"] },
-          { key: -32, n: "Paternal Great", s: "M", ux: -33, a: ["F", "H", "S"] },
-          { key: -33, n: "Paternal Great", s: "F", a: ["S"] },
-          { key: -40, n: "Great Uncle", s: "M", m: -33, f: -32, a: ["F", "H", "S"] },
-          { key: -41, n: "Great Aunt", s: "F", m: -33, f: -32, a: ["B", "I", "S"] },
-          { key: -20, n: "Uncle", s: "M", m: -11, f: -10, a: ["A", "S"] },
+        // "Aaron"'s ancestors
+        { key: -10, n: "Paternal Grandfather", s: "M", m: -33, f: -32, ux: -11, a: ["A", "S"] },
+        { key: -11, n: "Paternal Grandmother", s: "F", a: ["E", "S"] },
+        { key: -32, n: "Paternal Great", s: "M", ux: -33, a: ["F", "H", "S"] },
+        { key: -33, n: "Paternal Great", s: "F", a: ["S"] },
+        { key: -40, n: "Great Uncle", s: "M", m: -33, f: -32, a: ["F", "H", "S"] },
+        { key: -41, n: "Great Aunt", s: "F", m: -33, f: -32, a: ["B", "I", "S"] },
+        { key: -20, n: "Uncle", s: "M", m: -11, f: -10, a: ["A", "S"] },
 
-          // "Alice"'s ancestors
-          { key: -12, n: "Maternal Grandfather", s: "M", ux: -13, a: ["D", "L", "S"] },
-          { key: -13, n: "Maternal Grandmother", s: "F", m: -31, f: -30, a: ["H", "S"] },
-          { key: -21, n: "Aunt", s: "F", m: -13, f: -12, a: ["C", "I"] },
-          { key: -22, n: "Uncle", s: "M", ux: -21 },
-          { key: -23, n: "Cousin", s: "M", m: -21, f: -22 },
-          { key: -30, n: "Maternal Great", s: "M", ux: -31, a: ["D", "J", "S"] },
-          { key: -31, n: "Maternal Great", s: "F", m: -50, f: -51, a: ["B", "H", "L", "S"] },
-          { key: -42, n: "Great Uncle", s: "M", m: -30, f: -31, a: ["C", "J", "S"] },
-          { key: -43, n: "Great Aunt", s: "F", m: -30, f: -31, a: ["E", "G", "S"] },
-          { key: -50, n: "Maternal Great Great", s: "F", ux: -51, a: ["D", "I", "S"] },
-          { key: -51, n: "Maternal Great Great", s: "M", a: ["B", "H", "S"] }
-        ],
+        // "Alice"'s ancestors
+        { key: -12, n: "Maternal Grandfather", s: "M", ux: -13, a: ["D", "L", "S"] },
+        { key: -13, n: "Maternal Grandmother", s: "F", m: -31, f: -30, a: ["H", "S"] },
+        { key: -21, n: "Aunt", s: "F", m: -13, f: -12, a: ["C", "I"] },
+        { key: -22, n: "Uncle", s: "M", ux: -21 },
+        { key: -23, n: "Cousin", s: "M", m: -21, f: -22 },
+        { key: -30, n: "Maternal Great", s: "M", ux: -31, a: ["D", "J", "S"] },
+        { key: -31, n: "Maternal Great", s: "F", m: -50, f: -51, a: ["B", "H", "L", "S"] },
+        { key: -42, n: "Great Uncle", s: "M", m: -30, f: -31, a: ["C", "J", "S"] },
+        { key: -43, n: "Great Aunt", s: "F", m: -30, f: -31, a: ["E", "G", "S"] },
+        { key: -50, n: "Maternal Great Great", s: "F", ux: -51, a: ["D", "I", "S"] },
+        { key: -51, n: "Maternal Great Great", s: "M", a: ["B", "H", "S"] }
+      ],
         4 /* focus on this person */);
     }
 
@@ -237,6 +237,8 @@
             linkLabelKeysProperty: "labelKeys",
             // this property determines which template is used
             nodeCategoryProperty: "s",
+            // if a node data object is copied, copy its data.a Array
+            copiesArrays: true,
             // create all of the nodes for people
             nodeDataArray: array
           });
@@ -280,7 +282,7 @@
         var key = data.key;
         var uxs = data.ux;
         if (uxs !== undefined) {
-          if (typeof uxs === "number") uxs = [ uxs ];
+          if (typeof uxs === "number") uxs = [uxs];
           for (var j = 0; j < uxs.length; j++) {
             var wife = uxs[j];
             if (key === wife) {
@@ -300,7 +302,7 @@
         }
         var virs = data.vir;
         if (virs !== undefined) {
-          if (typeof virs === "number") virs = [ virs ];
+          if (typeof virs === "number") virs = [virs];
           for (var j = 0; j < virs.length; j++) {
             var husband = virs[j];
             if (key === husband) {
@@ -354,7 +356,6 @@
     }
     go.Diagram.inherit(GenogramLayout, go.LayeredDigraphLayout);
 
-    /** @override */
     GenogramLayout.prototype.makeNetwork = function(coll) {
       // generate LayoutEdges for each parent-child Link
       var net = this.createNetwork();
@@ -463,7 +464,7 @@
 
     // collect all of the people indirectly married with a person
     GenogramLayout.prototype.extendCohort = function(coll, node) {
-      if (coll.contains(node)) return;
+      if (coll.has(node)) return;
       coll.add(node);
       var lay = this;
       node.linksConnected.each(function(l) {
@@ -474,7 +475,6 @@
       });
     };
 
-    /** @override */
     GenogramLayout.prototype.assignLayers = function() {
       go.LayeredDigraphLayout.prototype.assignLayers.call(this);
       var horiz = this.direction == 0.0 || this.direction == 180.0;
@@ -504,7 +504,6 @@
       // (other than the ones that are the widest or tallest in their respective layer).
     };
 
-    /** @override */
     GenogramLayout.prototype.commitNodes = function() {
       go.LayeredDigraphLayout.prototype.commitNodes.call(this);
       // position regular nodes
@@ -583,7 +582,7 @@
 </head>
 <body onload="init()">
 <div id="sample">
-  <div id="myDiagramDiv" style="border: solid 1px black; width:100%; height:600px"></div>
+  <div id="myDiagramDiv" style="background-color: #F8F8F8; border: solid 1px black; width:100%; height:600px;"></div>
   <p>A <em>genogram</em> or <em>pedigree chart</em> is an extended family tree diagram that displays information about each person or each relationship.</p>
   <p>
     There are functions that convert an attribute value into a brush color or Shape geometry,

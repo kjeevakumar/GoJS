@@ -1,11 +1,11 @@
 "use strict";
 /*
-*  Copyright (C) 1998-2018 by Northwoods Software Corporation. All Rights Reserved.
+*  Copyright (C) 1998-2020 by Northwoods Software Corporation. All Rights Reserved.
 */
 
 /**
   This class implements an inspector for GoJS model data objects.
-  The varructor takes three arguments:
+  The constructor takes three arguments:
     {string} divid a string referencing the HTML ID of the to-be inspector's div.
     {Diagram} diagram a reference to a GoJS Diagram.
     {Object} options An optional JS Object describing options for the inspector.
@@ -139,7 +139,7 @@ Inspector.prototype.inspectObject = function(object) {
 
   // single object or no objects
   if (!inspectedObjects || !this.multipleSelection) {
-    if (inspectedObject === null || this.inspectedObject === inspectedObject) {
+    if (inspectedObject === null) {
       this.inspectedObject = inspectedObject;
       this.updateAllHTML();
       return;

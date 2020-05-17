@@ -1,6 +1,6 @@
 "use strict";
 /*
-*  Copyright (C) 1998-2018 by Northwoods Software Corporation. All Rights Reserved.
+*  Copyright (C) 1998-2020 by Northwoods Software Corporation. All Rights Reserved.
 */
 
 // A custom routed Link for showing the distances between a point on one node and a point on another node.
@@ -13,6 +13,14 @@
 // extension, for how far the dimension line is from the measured points,
 // inset, for leaving room for a text label, and
 // gap, for distance that the extension line starts from the measured points
+
+/*
+* This is an extension and not part of the main GoJS library.
+* Note that the API for this class may change with any version, even point releases.
+* If you intend to use an extension in production, you should copy the code to your own source directory.
+* Extensions can be found in the GoJS kit under the extensions or extensionsTS folders.
+* See the Extensions intro page (https://gojs.net/latest/intro/extensions.html) for more information.
+*/
 
 /**
 * @constructor
@@ -34,6 +42,21 @@ function DimensioningLink() {
   this._gap = 10;
 }
 go.Diagram.inherit(DimensioningLink, go.Link);
+
+/**
+* @ignore
+* Copies properties to a cloned DimensioningLink.
+* @this {DimensioningLink}
+* @param {DimensioningLink} copy
+* @override
+*/
+DimensioningLink.prototype.cloneProtected = function(copy) {
+  go.Link.prototype.cloneProtected.call(this, copy);
+  copy._direction = this._direction;
+  copy._extension = this._extension;
+  copy._inset = this._inset;
+  copy._gap = this._gap;
+}
 
 /*
 * The general angle at which the measurement should be made.
@@ -108,7 +131,6 @@ Object.defineProperty(DimensioningLink.prototype, "gap", {
 });
 
 /**
-* @override
 * @return {boolean} true if it computed a route of points
 */
 DimensioningLink.prototype.computePoints = function() {

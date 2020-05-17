@@ -1,12 +1,20 @@
 "use strict";
 /*
-*  Copyright (C) 1998-2018 by Northwoods Software Corporation. All Rights Reserved.
+*  Copyright (C) 1998-2020 by Northwoods Software Corporation. All Rights Reserved.
+*/
+
+/*
+* This is an extension and not part of the main GoJS library.
+* Note that the API for this class may change with any version, even point releases.
+* If you intend to use an extension in production, you should copy the code to your own source directory.
+* Extensions can be found in the GoJS kit under the extensions or extensionsTS folders.
+* See the Extensions intro page (https://gojs.net/latest/intro/extensions.html) for more information.
 */
 
 /**
 * @constructor
 * @extends CommandHandler
-* @class 
+* @class
 * This CommandHandler class uses localStorage as the repository for the clipboard,
 * rather than an in-memory global variable.
 * It requires that the {@link Diagram#model} be serializable and deserializable using {@link Model#toJson} and {@link Model.fromJson}.
@@ -36,7 +44,6 @@ function LocalStorageCommandHandler() {
 go.Diagram.inherit(LocalStorageCommandHandler, go.CommandHandler);
 
 /**
-* @override
 * @this {LocalStorageCommandHandler}
 * @param {Iterable.<Part>} coll a collection of {@link Part}s.
 */
@@ -65,12 +72,11 @@ LocalStorageCommandHandler.prototype.copyToClipboard = function(coll) {
 };
 
 /**
-* @override
 * @this {LocalStorageCommandHandler}
 * @return {Set.<Part>} a collection of newly pasted {@link Part}s
 */
 LocalStorageCommandHandler.prototype.pasteFromClipboard = function() {
-  var coll = new go.Set(go.Part);
+  var coll = new go.Set(/*go.Part*/);
   try {
     var clipstr = window.localStorage.getItem(this.StorageKey);
     var clipfrmt = window.localStorage.getItem(this.FormatKey);
@@ -81,10 +87,10 @@ LocalStorageCommandHandler.prototype.pasteFromClipboard = function() {
       // recover the model from the clipboard rendering
       clipdiag.model = go.Model.fromJson(clipstr);
       // copy all the CLIPDIAG Parts into this Diagram
-      const all = new go.List().addAll(clipdiag.parts).addAll(clipdiag.nodes).addAll(clipdiag.links);
+      var all = new go.List().addAll(clipdiag.parts).addAll(clipdiag.nodes).addAll(clipdiag.links);
       var copymap = this.diagram.copyParts(all, this.diagram, false);
       // return a Set of the copied Parts
-      return new go.Set(go.Part).addAll(copymap.iteratorValues);
+      return new go.Set(/*go.Part*/).addAll(copymap.iteratorValues);
     }
   } catch (ex) {
     // fallback implementation
@@ -93,11 +99,11 @@ LocalStorageCommandHandler.prototype.pasteFromClipboard = function() {
 };
 
 /**
-* @override
 * @this {LocalStorageCommandHandler}
+* @param {Point?} pos
 * @return {boolean}
 */
-LocalStorageCommandHandler.prototype.canPasteSelection = function() {
+LocalStorageCommandHandler.prototype.canPasteSelection = function(pos) {
   var diagram = this.diagram;
   if (diagram === null || diagram.isReadOnly || diagram.isModelReadOnly) return false;
   if (!diagram.allowInsert || !diagram.allowClipboard) return false;
@@ -109,6 +115,6 @@ LocalStorageCommandHandler.prototype.canPasteSelection = function() {
     return true;
   } catch (ex) {
     // fallback implementation
-    return go.CommandHandler.prototype.canPasteSelection();
+    return go.CommandHandler.prototype.canPasteSelection(pos);
   }
 };

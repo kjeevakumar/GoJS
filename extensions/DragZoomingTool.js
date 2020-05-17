@@ -1,9 +1,17 @@
 "use strict";
 /*
-*  Copyright (C) 1998-2018 by Northwoods Software Corporation. All Rights Reserved.
+*  Copyright (C) 1998-2020 by Northwoods Software Corporation. All Rights Reserved.
 */
 
 // A custom Tool for zooming into a selected area
+
+/*
+* This is an extension and not part of the main GoJS library.
+* Note that the API for this class may change with any version, even point releases.
+* If you intend to use an extension in production, you should copy the code to your own source directory.
+* Extensions can be found in the GoJS kit under the extensions or extensionsTS folders.
+* See the Extensions intro page (https://gojs.net/latest/intro/extensions.html) for more information.
+*/
 
 /**
 * @constructor
@@ -21,14 +29,14 @@
 * If the value is null, the tool zooms its own {@link Tool#diagram}.
 * <p/>
 * You can use this tool in a modal manner by executing:
-* <pre><code>
+* <pre>
 *   diagram.currentTool = new DragZoomingTool();
-* </code></pre>
+* </pre>
 * <p/>
 * Use this tool in a mode-less manner by executing:
-* <pre><code>
+* <pre>
 *   myDiagram.toolManager.mouseMoveTools.insertAt(2, new DragZoomingTool());
-* </code></pre>
+* </pre>
 * However when used mode-lessly as a mouse-move tool, in {@link ToolManager#mouseMoveTools},
 * this cannot start running unless there has been a motionless delay
 * after the mouse-down event of at least {@link #delay} milliseconds.

@@ -1,23 +1,30 @@
-'use strict';
 /*
-*  Copyright (C) 1998-2018 by Northwoods Software Corporation. All Rights Reserved.
+*  Copyright (C) 1998-2020 by Northwoods Software Corporation. All Rights Reserved.
 */
 
-import * as go from "../release/go";
+/*
+* This is an extension and not part of the main GoJS library.
+* Note that the API for this class may change with any version, even point releases.
+* If you intend to use an extension in production, you should copy the code to your own source directory.
+* Extensions can be found in the GoJS kit under the extensions or extensionsTS folders.
+* See the Extensions intro page (https://gojs.net/latest/intro/extensions.html) for more information.
+*/
+
+import * as go from '../release/go.js';
 
 // This file holds the definitions of two useful figures: "RoundedTopRectangle" and "RoundedBottomRectangle".
 // These are demonstrated at ../samples/twoHalves.html and ../samples/roundedGroups.html.
 
-go.Shape.defineFigureGenerator("RoundedTopRectangle", function (shape: go.Shape, w: number, h: number) {
+go.Shape.defineFigureGenerator('RoundedTopRectangle', function (shape: go.Shape, w: number, h: number) {
   // this figure takes one parameter, the size of the corner
-  var p1 = 5;  // default corner size
+  let p1 = 5;  // default corner size
   if (shape !== null) {
-    var param1 = shape.parameter1;
+    const param1 = shape.parameter1;
     if (!isNaN(param1) && param1 >= 0) p1 = param1;  // can't be negative or NaN
   }
   p1 = Math.min(p1, w / 2);
   p1 = Math.min(p1, h / 2);  // limit by whole height or by half height?
-  var geo = new go.Geometry();
+  const geo = new go.Geometry();
   // a single figure consisting of straight lines and quarter-circle arcs
   geo.add(new go.PathFigure(0, p1)
     .add(new go.PathSegment(go.PathSegment.Arc, 180, 90, p1, p1, p1, p1))
@@ -31,16 +38,16 @@ go.Shape.defineFigureGenerator("RoundedTopRectangle", function (shape: go.Shape,
   return geo;
 });
 
-go.Shape.defineFigureGenerator("RoundedBottomRectangle", function (shape: go.Shape, w: number, h: number) {
+go.Shape.defineFigureGenerator('RoundedBottomRectangle', function (shape: go.Shape, w: number, h: number) {
   // this figure takes one parameter, the size of the corner
-  var p1 = 5;  // default corner size
+  let p1 = 5;  // default corner size
   if (shape !== null) {
-    var param1 = shape.parameter1;
+    const param1 = shape.parameter1;
     if (!isNaN(param1) && param1 >= 0) p1 = param1;  // can't be negative or NaN
   }
   p1 = Math.min(p1, w / 2);
   p1 = Math.min(p1, h / 2);  // limit by whole height or by half height?
-  var geo = new go.Geometry();
+  const geo = new go.Geometry();
   // a single figure consisting of straight lines and quarter-circle arcs
   geo.add(new go.PathFigure(0, 0)
     .add(new go.PathSegment(go.PathSegment.Line, w, 0))

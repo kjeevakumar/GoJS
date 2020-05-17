@@ -1,7 +1,13 @@
+/*
+*  Copyright (C) 1998-2020 by Northwoods Software Corporation. All Rights Reserved.
+*/
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -14,37 +20,41 @@ var __extends = (this && this.__extends) || (function () {
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "../release/go"], factory);
+        define(["require", "exports", "../release/go.js"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /*
-    *  Copyright (C) 1998-2018 by Northwoods Software Corporation. All Rights Reserved.
+    * This is an extension and not part of the main GoJS library.
+    * Note that the API for this class may change with any version, even point releases.
+    * If you intend to use an extension in production, you should copy the code to your own source directory.
+    * Extensions can be found in the GoJS kit under the extensions or extensionsTS folders.
+    * See the Extensions intro page (https://gojs.net/latest/intro/extensions.html) for more information.
     */
-    var go = require("../release/go");
+    var go = require("../release/go.js");
     /**
-    * @constructor
-    * @extends ResizingTool
-    * @class
-    * A custom tool for resizing multiple objects at once.
-    */
+     * The ResizeMultipleTool class lets the user resize multiple objects at once.
+     *
+     * If you want to experiment with this extension, try the <a href="../../extensionsTS/ResizeMultiple.html">Resize Multiple</a> sample.
+     * @category Tool Extension
+     */
     var ResizeMultipleTool = /** @class */ (function (_super) {
         __extends(ResizeMultipleTool, _super);
+        /**
+         * Constructs a ResizeMultipleTool and sets the name for the tool.
+         */
         function ResizeMultipleTool() {
             var _this = _super.call(this) || this;
-            _this.name = "ResizeMultiple";
+            _this.name = 'ResizeMultiple';
             return _this;
         }
         /**
-        * Overrides ResizingTool.resize to resize all selected objects to the same size.
-        * @this {ResizeMultipleTool}
-        * @param {Rect} newr the intended new rectangular bounds for each Part's {@link Part#resizeObject}.
-        */
+         * Overrides {@link ResizingTool#resize} to resize all selected objects to the same size.
+         * @param {Rect} newr the intended new rectangular bounds for each Part's {@link Part#resizeObject}.
+         */
         ResizeMultipleTool.prototype.resize = function (newr) {
             var diagram = this.diagram;
-            if (diagram === null)
-                return;
             diagram.selection.each(function (part) {
                 if (part instanceof go.Link || part instanceof go.Group)
                     return; // only Nodes and simple Parts

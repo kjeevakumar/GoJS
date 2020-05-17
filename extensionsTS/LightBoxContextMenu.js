@@ -1,21 +1,28 @@
+/*
+*  Copyright (C) 1998-2020 by Northwoods Software Corporation. All Rights Reserved.
+*/
 (function (factory) {
     if (typeof module === "object" && typeof module.exports === "object") {
         var v = factory(require, exports);
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "../release/go"], factory);
+        define(["require", "exports", "../release/go.js"], factory);
     }
 })(function (require, exports) {
-    // HTML + JavaScript context menu, made with HTMLInfo
-    // This file exposes one instance of HTMLInfo, window.myHTMLLightBox
-    // see also LightBoxContextMenu.css and /samples/htmlLightBoxContextMenu.html
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /*
-    *  Copyright (C) 1998-2018 by Northwoods Software Corporation. All Rights Reserved.
+    * This is an extension and not part of the main GoJS library.
+    * Note that the API for this class may change with any version, even point releases.
+    * If you intend to use an extension in production, you should copy the code to your own source directory.
+    * Extensions can be found in the GoJS kit under the extensions or extensionsTS folders.
+    * See the Extensions intro page (https://gojs.net/latest/intro/extensions.html) for more information.
     */
-    var go = require("../release/go");
+    var go = require("../release/go.js");
+    // HTML + JavaScript context menu, made with HTMLInfo
+    // This file exposes one instance of HTMLInfo, window.myHTMLLightBox
+    // see also LightBoxContextMenu.css and /samples/htmlLightBoxContextMenu.html
     (function (window) {
         /* HTML for context menu:
         <div id="contextMenuDIV">
@@ -23,13 +30,15 @@
           <div id="cmDark"></div>
         </div>
         */
-        var contextMenuDIV = document.createElement("div");
-        contextMenuDIV.id = "contextMenuDIV";
+        var contextMenuDIV = document.createElement('div');
+        contextMenuDIV.id = 'contextMenuDIV';
         // This is the actual HTML LightBox-style context menu, composed of buttons and a background:
-        var cmLight = document.createElement("div");
-        cmLight.id = "cmLight";
-        var cmDark = document.createElement("div");
-        cmDark.id = "cmDark";
+        var cmLight = document.createElement('div');
+        cmLight.id = 'cmLight';
+        cmLight.className = 'goCXforeground';
+        var cmDark = document.createElement('div');
+        cmDark.id = 'cmDark';
+        cmDark.className = 'goCXbackground';
         contextMenuDIV.appendChild(cmLight);
         contextMenuDIV.appendChild(cmDark);
         var cxMenuButtons = [
@@ -47,8 +56,8 @@
                 isVisible: function (diagram) { return diagram.commandHandler.canDeleteSelection(); }
             }, {
                 text: 'Paste',
-                command: function (diagram) { diagram.commandHandler.pasteSelection(diagram.lastInput.documentPoint); },
-                isVisible: function (diagram) { return diagram.commandHandler.canPasteSelection(); }
+                command: function (diagram) { diagram.commandHandler.pasteSelection(diagram.toolManager.contextMenuTool.mouseDownPoint); },
+                isVisible: function (diagram) { return diagram.commandHandler.canPasteSelection(diagram.toolManager.contextMenuTool.mouseDownPoint); }
             }, {
                 text: 'Select All',
                 command: function (diagram) { diagram.commandHandler.selectAll(); },
@@ -94,7 +103,6 @@
         });
         var firstTime = true;
         function showContextMenu(obj, diagram, tool) {
-            var _this = this;
             if (firstTime) {
                 // We don't want the div acting as a context menu to have a (browser) context menu!
                 cmLight.addEventListener('contextmenu', function (e) { e.preventDefault(); return false; }, false);
@@ -108,21 +116,21 @@
             cmLight.innerHTML = '';
             var ul = document.createElement('ul');
             cmLight.appendChild(ul);
-            for (var i = 0; i < cxMenuButtons.length; i++) {
+            var _loop_1 = function (i) {
                 var button = cxMenuButtons[i];
                 var command = button.command;
                 var isVisible = button.isVisible;
                 if (!(typeof command === 'function'))
-                    continue;
+                    return "continue";
                 // Only show buttons that have isVisible = true
                 if (typeof isVisible === 'function' && !isVisible(diagram))
-                    continue;
+                    return "continue";
                 var li = document.createElement('li');
                 var ahref = document.createElement('a');
                 ahref.href = '#';
-                ahref["_command"] = button.command;
+                ahref._command = button.command;
                 ahref.addEventListener('click', function (e) {
-                    _this._command(diagram);
+                    ahref._command(diagram);
                     tool.stopTool();
                     e.preventDefault();
                     return false;
@@ -130,11 +138,13 @@
                 ahref.textContent = button.text;
                 li.appendChild(ahref);
                 ul.appendChild(li);
+            };
+            for (var i = 0; i < cxMenuButtons.length; i++) {
+                _loop_1(i);
             }
             // show the whole LightBox context menu
             document.body.appendChild(contextMenuDIV);
         }
-        ;
         function hideContextMenu(diagram, tool) {
             document.body.removeChild(contextMenuDIV);
         }

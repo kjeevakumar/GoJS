@@ -1,11 +1,19 @@
-"use strict";
+﻿"use strict";
 /*
-*  Copyright (C) 1998-2018 by Northwoods Software Corporation. All Rights Reserved.
+*  Copyright (C) 1998-2020 by Northwoods Software Corporation. All Rights Reserved.
 */
 
 // FishboneLayout is a custom Layout derived from TreeLayout for creating "fishbone" diagrams.
 // A fishbone diagram also requires a Link class that implements custom routing, FishboneLink,
 // which is also defined in this file.
+
+/*
+* This is an extension and not part of the main GoJS library.
+* Note that the API for this class may change with any version, even point releases.
+* If you intend to use an extension in production, you should copy the code to your own source directory.
+* Extensions can be found in the GoJS kit under the extensions or extensionsTS folders.
+* See the Extensions intro page (https://gojs.net/latest/intro/extensions.html) for more information.
+*/
 
 /**
 * @constructor
@@ -33,7 +41,7 @@ FishboneLayout.prototype.makeNetwork = function(coll) {
   var net = go.TreeLayout.prototype.makeNetwork.call(this, coll);
   // make a copy of the collection of TreeVertexes
   // because we will be modifying the TreeNetwork.vertexes collection in the loop
-  var verts = new go.List(go.TreeVertex).addAll(net.vertexes);
+  var verts = new go.List(/*go.TreeVertex*/).addAll(net.vertexes);
   verts.each(function(v) {
     // ignore leaves of tree
     if (v.destinationEdges.count === 0) return;
@@ -194,6 +202,8 @@ function FishboneLink() {
   go.Link.call(this);
 };
 go.Diagram.inherit(FishboneLink, go.Link);
+
+FishboneLink.prototype.computeAdjusting = function() { return this.adjusting; }
 
 FishboneLink.prototype.computePoints = function() {
   var result = go.Link.prototype.computePoints.call(this);

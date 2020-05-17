@@ -1,9 +1,17 @@
 "use strict";
 /*
-*  Copyright (C) 1998-2018 by Northwoods Software Corporation. All Rights Reserved.
+*  Copyright (C) 1998-2020 by Northwoods Software Corporation. All Rights Reserved.
 */
 
 // A custom Layout that lays out a chain of nodes in a snake-like fashion
+
+/*
+* This is an extension and not part of the main GoJS library.
+* Note that the API for this class may change with any version, even point releases.
+* If you intend to use an extension in production, you should copy the code to your own source directory.
+* Extensions can be found in the GoJS kit under the extensions or extensionsTS folders.
+* See the Extensions intro page (https://gojs.net/latest/intro/extensions.html) for more information.
+*/
 
 /**
 * @constructor
@@ -29,7 +37,6 @@ go.Diagram.inherit(SerpentineLayout, go.Layout);
 * Copies properties to a cloned Layout.
 * @this {SerpentineLayout}
 * @param {Layout} copy
-* @override
 */
 SerpentineLayout.prototype.cloneProtected = function(copy) {
   go.Layout.prototype.cloneProtected.call(this, copy);
@@ -88,11 +95,11 @@ SerpentineLayout.prototype.doLayout = function(coll) {
   var increasing = true;
   var node = root;
   while (node !== null) {
-    var b = node.actualBounds;
+    var b = this.getLayoutBounds(node);
     // get the next node, if any
     var nextlink = node.findLinksOutOf().first();
     var nextnode = (nextlink !== null ? nextlink.toNode : null);
-    var nb = (nextnode !== null ? nextnode.actualBounds : new go.Rect());
+    var nb = (nextnode !== null ? this.getLayoutBounds(nextnode) : new go.Rect());
     if (increasing) {
       node.move(new go.Point(x, y));
       x += b.width;

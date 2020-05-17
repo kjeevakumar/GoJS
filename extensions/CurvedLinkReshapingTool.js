@@ -1,17 +1,25 @@
 "use strict";
 /*
-*  Copyright (C) 1998-2018 by Northwoods Software Corporation. All Rights Reserved.
+*  Copyright (C) 1998-2020 by Northwoods Software Corporation. All Rights Reserved.
 */
 
 // A custom LinkReshapingTool that shows only a single reshape handle on a Bezier curved Link.
 // Dragging that handle changes the value of {@link Link#curviness}.
+
+/*
+* This is an extension and not part of the main GoJS library.
+* Note that the API for this class may change with any version, even point releases.
+* If you intend to use an extension in production, you should copy the code to your own source directory.
+* Extensions can be found in the GoJS kit under the extensions or extensionsTS folders.
+* See the Extensions intro page (https://gojs.net/latest/intro/extensions.html) for more information.
+*/
 
 /**
 * @constructor
 * @extends LinkReshapingTool
 * @class
 * This CurvedLinkReshapingTool class allows for a Link's path to be modified by the user
-* via the dragging of a single tool handle at the middle of the link. 
+* via the dragging of a single tool handle at the middle of the link.
 */
 function CurvedLinkReshapingTool() {
   go.LinkReshapingTool.call(this);
@@ -21,7 +29,6 @@ function CurvedLinkReshapingTool() {
 go.Diagram.inherit(CurvedLinkReshapingTool, go.LinkReshapingTool);
 
 /**
-* @override
 * @this {CurvedLinkReshapingTool}
 * @param {Shape} pathshape
 * @return {Adornment}
@@ -44,7 +51,6 @@ CurvedLinkReshapingTool.prototype.makeAdornment = function(pathshape) {
 };
 
 /**
-* @override
 * @this {CurvedLinkReshapingTool}
 */
 CurvedLinkReshapingTool.prototype.doActivate = function() {
@@ -53,7 +59,6 @@ CurvedLinkReshapingTool.prototype.doActivate = function() {
 };
 
 /**
-* @override
 * @this {CurvedLinkReshapingTool}
 */
 CurvedLinkReshapingTool.prototype.doCancel = function() {
@@ -62,7 +67,6 @@ CurvedLinkReshapingTool.prototype.doCancel = function() {
 };
 
 /**
-* @override
 * @this {CurvedLinkReshapingTool}
 * @param {Point} newpt
 * @return {Point}

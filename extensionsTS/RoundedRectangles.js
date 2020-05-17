@@ -1,21 +1,28 @@
+/*
+*  Copyright (C) 1998-2020 by Northwoods Software Corporation. All Rights Reserved.
+*/
 (function (factory) {
     if (typeof module === "object" && typeof module.exports === "object") {
         var v = factory(require, exports);
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "../release/go"], factory);
+        define(["require", "exports", "../release/go.js"], factory);
     }
 })(function (require, exports) {
-    'use strict';
+    "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /*
-    *  Copyright (C) 1998-2018 by Northwoods Software Corporation. All Rights Reserved.
+    * This is an extension and not part of the main GoJS library.
+    * Note that the API for this class may change with any version, even point releases.
+    * If you intend to use an extension in production, you should copy the code to your own source directory.
+    * Extensions can be found in the GoJS kit under the extensions or extensionsTS folders.
+    * See the Extensions intro page (https://gojs.net/latest/intro/extensions.html) for more information.
     */
-    var go = require("../release/go");
+    var go = require("../release/go.js");
     // This file holds the definitions of two useful figures: "RoundedTopRectangle" and "RoundedBottomRectangle".
     // These are demonstrated at ../samples/twoHalves.html and ../samples/roundedGroups.html.
-    go.Shape.defineFigureGenerator("RoundedTopRectangle", function (shape, w, h) {
+    go.Shape.defineFigureGenerator('RoundedTopRectangle', function (shape, w, h) {
         // this figure takes one parameter, the size of the corner
         var p1 = 5; // default corner size
         if (shape !== null) {
@@ -38,7 +45,7 @@
         geo.spot2 = new go.Spot(1, 1, -0.3 * p1, 0);
         return geo;
     });
-    go.Shape.defineFigureGenerator("RoundedBottomRectangle", function (shape, w, h) {
+    go.Shape.defineFigureGenerator('RoundedBottomRectangle', function (shape, w, h) {
         // this figure takes one parameter, the size of the corner
         var p1 = 5; // default corner size
         if (shape !== null) {

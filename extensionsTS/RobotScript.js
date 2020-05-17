@@ -1,72 +1,85 @@
+/*
+*  Copyright (C) 1998-2020 by Northwoods Software Corporation. All Rights Reserved.
+*/
 (function (factory) {
     if (typeof module === "object" && typeof module.exports === "object") {
         var v = factory(require, exports);
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "../release/go", "./Robot"], factory);
+        define(["require", "exports", "../release/go.js", "./Robot.js"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /*
-    *  Copyright (C) 1998-2018 by Northwoods Software Corporation. All Rights Reserved.
+    * This is an extension and not part of the main GoJS library.
+    * Note that the API for this class may change with any version, even point releases.
+    * If you intend to use an extension in production, you should copy the code to your own source directory.
+    * Extensions can be found in the GoJS kit under the extensions or extensionsTS folders.
+    * See the Extensions intro page (https://gojs.net/latest/intro/extensions.html) for more information.
     */
-    var go = require("../release/go");
-    var Robot_1 = require("./Robot");
+    var go = require("../release/go.js");
+    var Robot_js_1 = require("./Robot.js");
     var robot; // this global variable will hold an instance of the Robot class for myDiagram
     var myDiagram;
     var myPalette;
     function init() {
-        if (typeof window["goSamples"] === 'function')
-            window["goSamples"](); // init for these samples -- you don't need to call this  
+        if (window.goSamples)
+            window.goSamples(); // init for these samples -- you don't need to call this
         var $ = go.GraphObject.make; // for conciseness in defining templates
         function showProperties(e, obj) {
             var node = obj.part.adornedPart;
-            var msg = "Context clicked: " + node.data.key + ". ";
-            msg += "Selection includes:";
+            if (node === null || node.data === null)
+                return;
+            var msg = 'Context clicked: ' + node.data.key + '. ';
+            msg += 'Selection includes:';
             myDiagram.selection.each(function (part) {
-                msg += " " + part.toString();
+                msg += ' ' + part.toString();
             });
-            document.getElementById("myStatus").textContent = msg;
+            var stat = document.getElementById('myStatus');
+            if (stat !== null)
+                stat.textContent = msg;
         }
         function nodeClicked(e, obj) {
             var evt = e.copy();
             var node = obj.part;
-            var type = evt.clickCount === 2 ? "Double-Clicked: " : "Clicked: ";
-            var msg = type + node.data.key + ". ";
-            document.getElementById("myStatus").textContent = msg;
+            if (node === null || node.data === null)
+                return;
+            var type = evt.clickCount === 2 ? 'Double-Clicked: ' : 'Clicked: ';
+            var msg = type + node.data.key + '. ';
+            var stat = document.getElementById('myStatus');
+            if (stat !== null)
+                stat.textContent = msg;
         }
         myDiagram =
-            $(go.Diagram, "myDiagramDiv", // must name or refer to the DIV HTML element
+            $(go.Diagram, 'myDiagramDiv', // must name or refer to the DIV HTML element
             {
-                initialContentAlignment: go.Spot.Center,
-                allowDrop: true,
-                nodeTemplate: $(go.Node, "Auto", {
+                nodeTemplate: $(go.Node, 'Auto', {
                     click: nodeClicked,
                     doubleClick: nodeClicked,
-                    contextMenu: $(go.Adornment, "Vertical", $("ContextMenuButton", $(go.TextBlock, "Properties"), { click: showProperties }))
-                }, $(go.Shape, "Rectangle", { fill: "lightgray" }, { portId: "", fromLinkable: true, toLinkable: true, cursor: "pointer" }), $(go.TextBlock, { margin: 3 }, new go.Binding("text", "key"))),
+                    contextMenu: $('ContextMenu', $('ContextMenuButton', $(go.TextBlock, 'Properties'), { click: showProperties }))
+                }, $(go.Shape, 'Rectangle', { fill: 'lightgray' }, { portId: '', fromLinkable: true, toLinkable: true, cursor: 'pointer' }), $(go.TextBlock, { margin: 3 }, new go.Binding('text', 'key'))),
                 model: new go.GraphLinksModel([
-                    { key: "Lambda" },
-                    { key: "Mu" }
+                    { key: 'Lambda' },
+                    { key: 'Mu' }
                 ], [
-                    { from: "Lambda", to: "Mu" }
+                    { from: 'Lambda', to: 'Mu' }
                 ]),
-                "undoManager.isEnabled": true
+                'undoManager.isEnabled': true
             });
         // a shared Robot that can be used by all commands for this one Diagram
-        robot = new Robot_1.Robot(myDiagram); // defined in Robot.js
+        robot = new Robot_js_1.Robot(myDiagram); // defined in Robot.js
         // initialize the Palette that is on the left side of the page
         myPalette =
-            $(go.Palette, "myPaletteDiv", // must name or refer to the DIV HTML element
+            $(go.Palette, 'myPaletteDiv', // must name or refer to the DIV HTML element
             {
                 nodeTemplate: myDiagram.nodeTemplate,
                 model: new go.GraphLinksModel([
-                    { key: "Alpha" },
-                    { key: "Beta" },
-                    { key: "Gamma" },
-                    { key: "Delta" }
+                    { key: 'Alpha' },
+                    { key: 'Beta' },
+                    { key: 'Gamma' },
+                    { key: 'Delta' }
                 ])
             });
     }
@@ -82,7 +95,7 @@
     }
     exports.dragFromPalette = dragFromPalette;
     function copyNode() {
-        var alpha = myDiagram.findNodeForKey("Alpha");
+        var alpha = myDiagram.findNodeForKey('Alpha');
         if (alpha === null)
             return;
         var loc = alpha.actualBounds.center;
@@ -99,10 +112,10 @@
     }
     exports.copyNode = copyNode;
     function dragSelectNodes() {
-        var alpha = myDiagram.findNodeForKey("Alpha");
+        var alpha = myDiagram.findNodeForKey('Alpha');
         if (alpha === null)
             return;
-        var alpha2 = myDiagram.findNodeForKey("Alpha2");
+        var alpha2 = myDiagram.findNodeForKey('Alpha2');
         if (alpha2 === null)
             return;
         var coll = new go.Set();
@@ -124,7 +137,7 @@
     }
     exports.dragSelectNodes = dragSelectNodes;
     function clickContextMenu() {
-        var alpha = myDiagram.findNodeForKey("Alpha");
+        var alpha = myDiagram.findNodeForKey('Alpha');
         if (alpha === null)
             return;
         var loc = alpha.location;
@@ -144,15 +157,15 @@
     exports.clickContextMenu = clickContextMenu;
     function deleteSelection() {
         // Simulate clicking the "Del" key:
-        robot.keyDown("Del");
-        robot.keyUp("Del");
+        robot.keyDown('Del');
+        robot.keyUp('Del');
         // Now the selected Nodes are deleted.
         // Alternatively you could invoke the Delete command directly:
         // myDiagram.commandHandler.deleteSelection();
     }
     exports.deleteSelection = deleteSelection;
     function clickLambda() {
-        var lambda = myDiagram.findNodeForKey("Lambda");
+        var lambda = myDiagram.findNodeForKey('Lambda');
         if (lambda === null)
             return;
         var loc = lambda.location;
@@ -164,7 +177,7 @@
     }
     exports.clickLambda = clickLambda;
     function doubleClickLambda() {
-        var lambda = myDiagram.findNodeForKey("Lambda");
+        var lambda = myDiagram.findNodeForKey('Lambda');
         if (lambda === null)
             return;
         var loc = lambda.location;

@@ -1,6 +1,14 @@
 "use strict";
 /*
-*  Copyright (C) 1998-2018 by Northwoods Software Corporation. All Rights Reserved.
+*  Copyright (C) 1998-2020 by Northwoods Software Corporation. All Rights Reserved.
+*/
+
+/*
+* This is an extension and not part of the main GoJS library.
+* Note that the API for this class may change with any version, even point releases.
+* If you intend to use an extension in production, you should copy the code to your own source directory.
+* Extensions can be found in the GoJS kit under the extensions or extensionsTS folders.
+* See the Extensions intro page (https://gojs.net/latest/intro/extensions.html) for more information.
 */
 
 /**
@@ -8,7 +16,7 @@
 * @extends Tool
 * @class
 * This GeometryReshapingTool class allows for a Shape's Geometry to be modified by the user
-* via the dragging of tool handles. 
+* via the dragging of tool handles.
 * This does not handle Links, whose routes should be reshaped by the LinkReshapingTool.
 * The {@link #reshapeObjectName} needs to identify the named {@link Shape} within the
 * selected {@link Part}.
@@ -47,7 +55,7 @@ go.Diagram.inherit(GeometryReshapingTool, go.Tool);
 /*
 * A small GraphObject used as a reshape handle for each segment.
 * The default GraphObject is a small blue diamond.
-* @name GeometryReshapingTool#handleArchetype 
+* @name GeometryReshapingTool#handleArchetype
 * @function.
 * @return {GraphObject}
 */
@@ -138,12 +146,7 @@ GeometryReshapingTool.prototype.updateAdornments = function(part) {
             case 2: x = seg.point1X; y = seg.point1Y; break;
             case 3: x = seg.point2X; y = seg.point2Y; break;
           }
-          var bw = b.width;
-          if (bw === 0) bw = 0.001;
-          var bh = b.height;
-          if (bh === 0) bh = 0.001;
-          h.alignment = new go.Spot(Math.max(0, Math.min((x - b.x) / bw, 1)),
-                                    Math.max(0, Math.min((y - b.y) / bh, 1)));
+          h.alignment = new go.Spot(0, 0, x - b.x, y - b.y);
         });
 
         part.addAdornment(this.name, adornment);
@@ -332,10 +335,11 @@ GeometryReshapingTool.prototype.reshape = function(newPoint) {
   var offset = geo.normalize();  // avoid any negative coordinates in the geometry
   shape.geometry = geo;  // modify the Shape
   var part = shape.part;  // move the Part holding the Shape
-  if (!part.locationSpot.equals(go.Spot.Center)) {  // but only if the locationSpot isn't Center
-    part.move(part.position.copy().subtract(offset));
+  part.ensureBounds();
+  if (part.locationObject !== shape && !part.locationSpot.equals(go.Spot.Center)) {  // but only if the locationSpot isn't Center
+    // support the whole Node being rotated
+    part.move(part.position.copy().subtract(offset.rotate(part.angle)));
   }
-  this.updateAdornments(part);  // update any Adornments of the Part
   this.diagram.maybeUpdate();  // force more frequent drawing for smoother looking behavior
 };
 

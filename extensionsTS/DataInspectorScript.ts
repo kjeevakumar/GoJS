@@ -1,22 +1,27 @@
-'use strict';
 /*
-*  Copyright (C) 1998-2018 by Northwoods Software Corporation. All Rights Reserved.
+*  Copyright (C) 1998-2020 by Northwoods Software Corporation. All Rights Reserved.
 */
 
-import * as go from '../release/go';
-import { Inspector } from './DataInspector';
+/*
+* This is an extension and not part of the main GoJS library.
+* Note that the API for this class may change with any version, even point releases.
+* If you intend to use an extension in production, you should copy the code to your own source directory.
+* Extensions can be found in the GoJS kit under the extensions or extensionsTS folders.
+* See the Extensions intro page (https://gojs.net/latest/intro/extensions.html) for more information.
+*/
+
+import * as go from '../release/go.js';
+import { Inspector } from './DataInspector.js';
 
 export function init() {
   if ((window as any).goSamples) (window as any).goSamples();  // init for these samples -- you don't need to call this
 
   const $ = go.GraphObject.make;  // for conciseness in defining templates
 
-  const myDiagram: go.Diagram & any =
+  const myDiagram: go.Diagram =
     $(go.Diagram, 'myDiagramDiv',  // create a Diagram for the DIV HTML element
       {
         'animationManager.isEnabled': false,
-        // position the graph in the middle of the diagram
-        initialContentAlignment: go.Spot.Center,
         // allow double-click in background to create a new node
         'clickCreatingTool.archetypeNodeData': { text: 'Node', color: 'white' },
         // allow Ctrl-G to call groupSelection()
@@ -112,6 +117,7 @@ export function init() {
     { from: 3, to: 1, color: '#6200EA' }
   ];
   myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+  // myDiagram.model = go.Model.fromJson((document.getElementById('mySavedModel') as any).value);
 
   // some shared model data
   myDiagram.model.modelData = { test: true, hello: 'world', version: 42 };
@@ -129,10 +135,10 @@ export function init() {
       // allows for multiple nodes to be inspected at once
       multipleSelection: true,
       // max number of node properties will be shown when multiple selection is true
-      showSize: 4,
-      // when multipleSelection is true, when showAllProperties is true it takes the union of properties
+      showLimit: 4,
+      // when multipleSelection is true, when showUnionProperties is true it takes the union of properties
       // otherwise it takes the intersection of properties
-      showAllProperties: true,
+      showUnionProperties: true,
 
       // uncomment this line to only inspect the named properties below instead of all properties on each object:
       // includesOwnProperties: false,
@@ -189,4 +195,7 @@ export function init() {
 
   // Attach to the window for console manipulation
   (window as any).myDiagram = myDiagram;
+  (window as any).inspector1 = inspector1;
+  (window as any).inspector2 = inspector2;
+  (window as any).inspector3 = inspector3;
 }
